@@ -1,0 +1,23 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and Pack
+        run: dotnet build MyPackage.csproj -c Release
+      
+      - name: Publish NuGet Package
+        run: nuget pack MyPackage.csproj -Properties Configuration=Release
+      
+      - name: Publish to NuGet
+        run: nuget push MyPackage.*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
